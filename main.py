@@ -24,10 +24,10 @@ class TinyCashBook(tb.Frame):
 
         # choose date
 
-        self.main_frame = Frame(self)
+        self.main_frame = tb.Frame(self)
         self.main_frame.pack()
 
-        ####### Frames for input forms #######################################
+############# Frames for input forms #######################################
         # Allowance form -------------------------------------------------
         self.allowance_frame = tb.LabelFrame(self.main_frame, text="💰Allowance💰", style='info.TLabelframe')
 
@@ -43,12 +43,12 @@ class TinyCashBook(tb.Frame):
         # Amount entry
         self.amount_allowance_entry = tb.Entry(self.allowance_frame, style='info', background="red", foreground='green')
         self.amount_allowance_entry.grid(row=1, column=1, padx=10, pady=10)
-
-        self.allowance_frame.pack(side=LEFT, padx=30)
-
         # Allowance add button
-        self.allowance_button = tb.Button(self.allowance_frame, text="ADD", style="info outline")
+        self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info outline")
         self.allowance_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="news")
+
+        self.allowance_frame.grid(row=0, column=0, padx=30, pady=30)
+
 
         # Expense form ----------------------------------------------------
         self.expense_frame = tb.LabelFrame(self.main_frame, text="💸Spending💸", style='danger.TLabelframe')
@@ -65,40 +65,56 @@ class TinyCashBook(tb.Frame):
         # Amount entry
         self.amount_expense_entry = tb.Entry(self.expense_frame, style='danger', background='gray')
         self.amount_expense_entry.grid(row=1, column=1, padx=10, pady=10)
-
-        self.expense_frame.pack(side=LEFT, padx=30)
-
         # Expense add button
-        self.expense_button = tb.Button(self.expense_frame, text="ADD", style="danger outline")
+        self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger outline")
         self.expense_button.grid(row=2, column=0, columnspan=2, padx=20, pady=10, sticky="news")
 
-        ####### Record table ###########################################
+        self.expense_frame.grid(row=0, column=1, padx=30, pady=30)
+
+
+########### Record table ###########################################
         self.record = tb.LabelFrame(self.main_frame, text="Record", style='warning.TLabelframe')
 
-        self.columns = ("date", "source_or_item", "amount")
+        self.columns = ("date", "source_or_item", "allowance", "spending")
         # Create Treeview
         self.record_tree = tb.Treeview(style="warning", columns=self.columns, show="headings")
         self.record_tree.pack(padx=(50), pady=(10, 50), anchor="w")
         # Format columns
-        self.record_tree.column('date', width=200, anchor=W)
-        self.record_tree.column('source_or_item', width=400, anchor=W)
-        self.record_tree.column('amount', width=200, anchor=E)
+        self.record_tree.column('date', width=150, anchor=W)
+        self.record_tree.column('source_or_item', width=350, anchor=W)
+        self.record_tree.column('allowance', width=150, anchor=E)
+        self.record_tree.column('spending', width=150, anchor=E)
         # Define headings
         self.record_tree.heading('date', text="Date", anchor=W)
         self.record_tree.heading('source_or_item', text="Source or Item", anchor=W)
-        self.record_tree.heading('amount', text="Amount", anchor=E)
+        self.record_tree.heading('allowance', text="allowance", anchor=E)
+        self.record_tree.heading('spending', text="spending", anchor=E)
         # Sample Data
         self.input_data = [
-            ('1/Jan/2024', 'Did some weeding in the garden', 10),
-            ('5/Jan/2024', 'Bought snacks', -5),
-            ('10/Jan/2024', 'Assisted in cleaning up dishes', 5),
-            ('14/Jan/2024', 'Sorted out recyclables in the house.', 5),
+            ('1/Jan/2024', 'Did some weeding in the garden', 10, " - "),
+            ('5/Jan/2024', 'Bought snacks', " - ", 5),
+            ('10/Jan/2024', 'Assisted in cleaning up dishes', 5, " - "),
+            ('14/Jan/2024', 'Sorted out recyclables in the house.', 5, " - "),
         ]
         # Add Data To Treeview
         for record in self.input_data:
             self.record_tree.insert('', END, values=record)
 
-        self.record.pack(side=LEFT, padx=30)
+        self.record.grid(row=1, column=0, padx=30)
+
+########### Edit and delete frame ###########################################
+        self.edit_delete = tb.LabelFrame(self.main_frame, text="Edit and Delete", style='success.TLabelframe')
+
+        # Edit button
+        self.edit_btn = tb.Button(self.edit_delete, text="EDIT", width=10, style="info")
+        self.edit_btn.grid(row=0, column=0, padx=20, pady=10)
+
+        # Delete button
+        self.delete_btn = tb.Button(self.edit_delete, text="DELETE", width=10, style="danger")
+        self.delete_btn.grid(row=0, column=1, padx=20, pady=10)
+
+        self.edit_delete.grid(row=1, column=1, padx=30, sticky="e")
+
 
 if __name__ == "__main__":
     app = tb.Window("TinyCashBook", "united")
