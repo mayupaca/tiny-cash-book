@@ -19,19 +19,27 @@ class TinyCashBook(tb.Frame):
             # Grab The Date
             self.date_label.config(text=f"You Picked: {self.date.entry.get()}")
 
-        # Select Record
-        def select_record():
         # Clear entry box
-        #     self.date_label.delete(0, END)
+        def clear_entries():
+            self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
-            # Get record Number
+
+        # Select Record
+        def select_record(e):
+        # Clear entry box
+            self.date.entry.delete(0, END)
+            self.allowance_source_entry.delete(0, END)
+            self.amount_allowance_entry.delete(0, END)
+            self.expense_item_entry.delete(0, END)
+            self.amount_expense_entry.delete(0, END)
+            # Get record
             selected = self.record_tree.focus()
             self.values = self.record_tree.item(selected, "values")
             # output to entry boxes
-            # self.date_label.insert(0, self.values[0])
+            self.date.entry.insert(0, self.values[0])
             self.allowance_source_entry.insert(0, self.values[1])
             self.amount_allowance_entry.insert(0, self.values[3])
             self.expense_item_entry.insert(0, self.values[2])
@@ -47,7 +55,7 @@ class TinyCashBook(tb.Frame):
         self.date = tb.DateEntry(self.date_entry, bootstyle="primary", firstweekday=6, dateformat="%Y/%m/%d")
         self.date.grid(row=0, column=0, padx=(10, 0), pady=10)
 
-        self.date_button = tb.Button(self.date_entry, text='Get Date', style="primary", command=get_date)
+        self.date_button = tb.Button(self.date_entry, text='Get Date', style="primary", width=10, command=get_date)
         self.date_button.grid(row=0, column=2, padx=10)
 
         self.date_label = tb.Label(self.date_entry, text="You Picked: ")
@@ -59,7 +67,7 @@ class TinyCashBook(tb.Frame):
         self.allowance_frame.pack(fill="x", expand="yes", padx=20)
 
         # Source label
-        self.allowance_source_label = tb.Label(self.allowance_frame, text="💡Source (How did you get?)  ")
+        self.allowance_source_label = tb.Label(self.allowance_frame, text="💡Who or How did you get? ")
         self.allowance_source_label.grid(row=1, column=0, padx=10, pady=10, sticky="w")
         # Source entry
         self.allowance_source_entry = tb.Entry(self.allowance_frame, style='info')
@@ -79,7 +87,7 @@ class TinyCashBook(tb.Frame):
         self.expense_frame.pack(fill="x", expand="yes", padx=20)
 
         # Expense label
-        self.expense_item_label = tb.Label(self.expense_frame, text="🍟Reason (What did you use?)")
+        self.expense_item_label = tb.Label(self.expense_frame, text="🍟Why did you use for?        ")
         self.expense_item_label.grid(row=2, column=0, padx=10, sticky="w")
         # Expense entry
         self.expense_item_entry = tb.Entry(self.expense_frame, style='warning')
@@ -96,18 +104,18 @@ class TinyCashBook(tb.Frame):
 
         ########### Record treeview ###########################################
         self.tree_frame = tb.LabelFrame(self.main_frame, text="💿Record💿", style='success.TLabelframe')
-        self.tree_frame.pack(fill="x", expand="yes", padx=10, pady=20)
+        self.tree_frame.pack(fill="x", expand="yes", padx=20)
         self.columns = ("date", "source", "item", "allowance", "spending")
 
         # Create Treeview
         self.record_tree = tb.Treeview(self.tree_frame, style="success", selectmode="extended", columns=self.columns, show="headings")
         self.record_tree.pack(fill="x", expand="yes", padx=10, pady=10)
         # Format columns
-        self.record_tree.column('date', width=100, anchor=W)
-        self.record_tree.column('source', width=200, anchor=W)
-        self.record_tree.column('item', width=200, anchor=W)
-        self.record_tree.column('allowance', width=100, anchor=E)
-        self.record_tree.column('spending', width=100, anchor=E)
+        self.record_tree.column('date', width=80, anchor=W)
+        self.record_tree.column('source', width=180, anchor=W)
+        self.record_tree.column('item', width=180, anchor=W)
+        self.record_tree.column('allowance', width=80, anchor=E)
+        self.record_tree.column('spending', width=80, anchor=E)
         # Define headings
         self.record_tree.heading('date', text="Date", anchor=W)
         self.record_tree.heading('source', text="Source", anchor=W)
@@ -128,15 +136,19 @@ class TinyCashBook(tb.Frame):
         ########### Update and delete  ###########################################
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Update or Delete🗑️", style='warning.TLabelframe')
         self.btn_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
-        # Select button
-        self.select_btn = tb.Button(self.btn_frame, text="SELECT", width=10, style="warning", command=select_record)
-        self.select_btn.grid(row=0, column=0, padx=20, pady=20, sticky="e")
         # Update button
         self.update_btn = tb.Button(self.btn_frame, text="UPDATE", width=10, style="success")
         self.update_btn.grid(row=0, column=1, padx=(0,20), pady=20, sticky="e")
+        # Clear button
+        self.select_btn = tb.Button(self.btn_frame, text="CLEAR", width=10, style="warning", command=clear_entries)
+        self.select_btn.grid(row=0, column=0, padx=20, pady=20, sticky="e")
         # Delete button
         self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=10, style="danger")
         self.delete_btn.grid(row=0, column=2, padx=(0,20), pady=20, sticky="e")
+
+        # Bind the treeview
+        self.record_tree.bind("<ButtonRelease-1>", select_record)
+
 
 
 if __name__ == "__main__":
