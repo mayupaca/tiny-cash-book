@@ -34,7 +34,6 @@ class TinyCashBook(tb.Frame):
         def delete_record():
             delete_item = self.record_tree.selection()[0]
             self.record_tree.delete(delete_item)
-
         # Clear entry box
         def clear_entries():
             self.date.entry.delete(0, END)
@@ -70,9 +69,18 @@ class TinyCashBook(tb.Frame):
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
 
+    # ------ Calculate -------------------------------
+        def calc_allowance():
+            pass
+        def calc_spending():
+            pass
+        def calc_remaining():
+            pass
+
+##### GUI ################################################
         self.main_frame = tb.Frame(self)
         self.main_frame.pack(padx=10)
-        ########## Date Entry ###########################################
+    #------ Date Entry -------------------------------
         self.date_entry = tb.LabelFrame(self.main_frame, text="📆Date📆", style='primary.TLabelframe')
         self.date_entry.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -85,8 +93,8 @@ class TinyCashBook(tb.Frame):
         self.date_label = tb.Label(self.date_entry, text="You Picked: ")
         self.date_label.grid(row=0, column=3, padx=10, pady=(10, 20))
 
-        ############# Input frame #######################################
-        # Allowance form -------------------------------------------------
+    #------ Input frame ------------------------------
+        # Allowance form
         self.allowance_frame = tb.LabelFrame(self.main_frame, text="💰Allowance💰", style='info.TLabelframe')
         self.allowance_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -106,7 +114,7 @@ class TinyCashBook(tb.Frame):
         self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info", command=add_record)
         self.allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-        # Expense form ----------------------------------------------------
+    #------ Expense form ----------------------------
         self.expense_frame = tb.LabelFrame(self.main_frame, text="💸Spending💸", style='danger.TLabelframe')
         self.expense_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -126,9 +134,9 @@ class TinyCashBook(tb.Frame):
         self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger", command=add_record)
         self.expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-        ########### Record treeview ###########################################
+    #------ Record treeview --------------------------
         self.tree_frame = tb.LabelFrame(self.main_frame, text="💿Record💿", style='success.TLabelframe')
-        self.tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        self.tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 0))
         self.columns = ("date", "source", "item", "allowance", "spending")
 
         # Create Treeview
@@ -157,18 +165,32 @@ class TinyCashBook(tb.Frame):
         for record in self.input_data:
             self.record_tree.insert('', END, values=record)
 
-        ########### Update and delete  ###########################################
-        self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Update or Delete🗑️", style='warning.TLabelframe')
-        self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
+    # ------ Total remain allowance ----------------------------
+        self.remain_frame = tb.LabelFrame(self.main_frame, text="🐖Record Total and Remaining🐖", style='success.TLabelframe')
+        self.remain_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 10))
+
+        self.remain_label = tb.Label(self.remain_frame, text="Total Allowance: ")
+        self.remain_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="e")
+        self.remain_label = tb.Label(self.remain_frame, text="Total Spending: ")
+        self.remain_label.grid(row=0, column=1, padx=10, pady=(10, 20))
+        self.remain_label = tb.Label(self.remain_frame, text="Remaining Allowance: ")
+        self.remain_label.grid(row=0, column=2, padx=10, pady=(10, 20))
+
+        self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=(calc_allowance, calc_spending, calc_remaining))
+        self.reload_btn.grid(row=0, column=3, padx=(0, 20), pady=(10, 20))
+
+    #------ Update and delete ----------------------------
+        self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Record Commands🗑", style='warning.TLabelframe')
+        self.btn_frame.pack(anchor="e", padx=20, pady=(0, 20))
         # Update button
-        self.update_btn = tb.Button(self.btn_frame, text="UPDATE", width=10, style="success", command=update_record)
-        self.update_btn.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
+        self.update_btn = tb.Button(self.btn_frame, text="UPDATE", width=10, style="warning", command=update_record)
+        self.update_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
         # Delete button
         self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=10, style="danger", command=delete_record)
-        self.delete_btn.grid(row=0, column=1, padx=(0,20), pady=(10, 20), sticky="e")
+        self.delete_btn.grid(row=0, column=1, padx=(0,20), pady=(10, 20))
         # Clear button
         self.clear_btn = tb.Button(self.btn_frame, text="CLEAR", width=10, style="secondary", command=clear_entries)
-        self.clear_btn.grid(row=0, column=2, padx=(0,20), pady=(10, 20), sticky="e")
+        self.clear_btn.grid(row=0, column=2, padx=(0,20), pady=(10, 20))
 
         # Bind the treeview
         self.record_tree.bind("<ButtonRelease-1>", select_record)
