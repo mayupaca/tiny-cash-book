@@ -18,6 +18,18 @@ class TinyCashBook(tb.Frame):
         def get_date():
             # Grab The Date
             self.date_label.config(text=f"You Picked: {self.date.entry.get()}")
+
+        # Add record
+        def add_record():
+            values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(),
+            self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
+            self.record_tree.insert("", END, values=values)
+            # Clear entry box
+            self.date.entry.delete(0, END)
+            self.allowance_source_entry.delete(0, END)
+            self.amount_allowance_entry.delete(0, END)
+            self.expense_item_entry.delete(0, END)
+            self.amount_expense_entry.delete(0, END)
         # Delete record
         def delete_record():
             delete_item = self.record_tree.selection()[0]
@@ -30,10 +42,9 @@ class TinyCashBook(tb.Frame):
             self.amount_allowance_entry.delete(0, END)
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
-
         # Select Record
         def select_record(e):
-        # Clear entry box
+            # Clear entry box
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
@@ -48,7 +59,6 @@ class TinyCashBook(tb.Frame):
             self.amount_allowance_entry.insert(0, self.values[3])
             self.expense_item_entry.insert(0, self.values[2])
             self.amount_expense_entry.insert(0, self.values[4])
-
         # Update record
         def update_record():
             selected = self.record_tree.focus()
@@ -93,7 +103,7 @@ class TinyCashBook(tb.Frame):
         self.amount_allowance_entry = tb.Entry(self.allowance_frame, style='info')
         self.amount_allowance_entry.grid(row=1, column=3, padx=10, pady=(10, 20))
         # Allowance add button
-        self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info outline")
+        self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info", command=add_record)
         self.allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
         # Expense form ----------------------------------------------------
@@ -113,7 +123,7 @@ class TinyCashBook(tb.Frame):
         self.amount_expense_entry = tb.Entry(self.expense_frame, style='danger')
         self.amount_expense_entry.grid(row=2, column=3, padx=10, pady=(10, 20))
         # Expense add button
-        self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger outline")
+        self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger", command=add_record)
         self.expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
         ########### Record treeview ###########################################
@@ -143,13 +153,13 @@ class TinyCashBook(tb.Frame):
             ['2024/1/10', 'Assisted in cleaning up dishes', '', 5, ''],
             ['2024/1/14', 'Sorted out recyclables in the house.', '', 5, ''],
         ]
-        # Add Data To Treeview
+        # Add sample data To Treeview
         for record in self.input_data:
             self.record_tree.insert('', END, values=record)
 
         ########### Update and delete  ###########################################
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Update or Delete🗑️", style='warning.TLabelframe')
-        self.btn_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
         # Update button
         self.update_btn = tb.Button(self.btn_frame, text="UPDATE", width=10, style="success", command=update_record)
         self.update_btn.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
@@ -162,8 +172,6 @@ class TinyCashBook(tb.Frame):
 
         # Bind the treeview
         self.record_tree.bind("<ButtonRelease-1>", select_record)
-
-
 
 if __name__ == "__main__":
     app = tb.Window("TinyCashBook", "sandstone")
