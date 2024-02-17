@@ -13,6 +13,13 @@ class TinyCashBook(tb.Frame):
         # Title
         self.app_title = tb.Label(self, text="👛Tiny Cash Book👛", font=("Helvetica", 20), foreground="#3D5361", )
         self.app_title.pack(padx=50, pady=(0, 10), anchor="w")
+        # Sample Data
+        self.input_data = [
+            ['2024/1/1', 'Did some weeding in the garden', '', 10, '', ],
+            ['2024/1/5', '', 'Bought snacks', '', 5, ],
+            ['2024/1/10', 'Assisted in cleaning up dishes', '', 5, ''],
+            ['2024/1/14', 'Sorted out recyclables in the house.', '', 5, ''],
+        ]
 
         # Get date
         def get_date():
@@ -24,16 +31,19 @@ class TinyCashBook(tb.Frame):
             values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(),
             self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
             self.record_tree.insert("", END, values=values)
+            self.input_data.append(values)
             # Clear entry box
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
+
         # Delete record
         def delete_record():
             delete_item = self.record_tree.selection()[0]
             self.record_tree.delete(delete_item)
+
         # Clear entry box
         def clear_entries():
             self.date.entry.delete(0, END)
@@ -41,6 +51,7 @@ class TinyCashBook(tb.Frame):
             self.amount_allowance_entry.delete(0, END)
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
+
         # Select Record
         def select_record(e):
             # Clear entry box
@@ -58,6 +69,7 @@ class TinyCashBook(tb.Frame):
             self.amount_allowance_entry.insert(0, self.values[3])
             self.expense_item_entry.insert(0, self.values[2])
             self.amount_expense_entry.insert(0, self.values[4])
+
         # Update record
         def update_record():
             selected = self.record_tree.focus()
@@ -70,17 +82,25 @@ class TinyCashBook(tb.Frame):
             self.amount_expense_entry.delete(0, END)
 
     # ------ Calculate -------------------------------
-        def calc_allowance():
-            pass
-        def calc_spending():
-            pass
-        def calc_remaining():
-            pass
+        def calc_cost():
+            total_allowance = 0
+            total_spending = 0
+            remaining = 0
+            for item in self.input_data:
+                if item[3] != '':
+                    total_allowance += int(item[3])
+                if item[4] != '':
+                    total_spending += int(item[4])
+                if item[3] != '':
+                    remaining += int(item[3])
+                elif item[4] != '':
+                    remaining -= int(item[4])
+            self.remain_label.config(text=f"Total Allowance:  ${total_allowance}   Total Spending:  ${total_spending}   Remaining Allowance:  ${remaining}")
 
-##### GUI ################################################
+    ##### GUI ################################################
         self.main_frame = tb.Frame(self)
         self.main_frame.pack(padx=10)
-    #------ Date Entry -------------------------------
+    # ------ Date Entry -------------------------------
         self.date_entry = tb.LabelFrame(self.main_frame, text="📆Date📆", style='primary.TLabelframe')
         self.date_entry.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -93,7 +113,7 @@ class TinyCashBook(tb.Frame):
         self.date_label = tb.Label(self.date_entry, text="You Picked: ")
         self.date_label.grid(row=0, column=3, padx=10, pady=(10, 20))
 
-    #------ Input frame ------------------------------
+    # ------ Input frame ------------------------------
         # Allowance form
         self.allowance_frame = tb.LabelFrame(self.main_frame, text="💰Allowance💰", style='info.TLabelframe')
         self.allowance_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
@@ -114,7 +134,7 @@ class TinyCashBook(tb.Frame):
         self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info", command=add_record)
         self.allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-    #------ Expense form ----------------------------
+    # ------ Expense form ----------------------------
         self.expense_frame = tb.LabelFrame(self.main_frame, text="💸Spending💸", style='danger.TLabelframe')
         self.expense_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -134,7 +154,7 @@ class TinyCashBook(tb.Frame):
         self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger", command=add_record)
         self.expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-    #------ Record treeview --------------------------
+    # ------ Record treeview --------------------------
         self.tree_frame = tb.LabelFrame(self.main_frame, text="💿Record💿", style='success.TLabelframe')
         self.tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 0))
         self.columns = ("date", "source", "item", "allowance", "spending")
@@ -154,32 +174,22 @@ class TinyCashBook(tb.Frame):
         self.record_tree.heading('item', text="Purchased Item", anchor=W)
         self.record_tree.heading('allowance', text="Allowance", anchor=E)
         self.record_tree.heading('spending', text="Spending", anchor=E)
-        # Sample Data
-        self.input_data = [
-            ['2024/1/1', 'Did some weeding in the garden', '', 10, '',],
-            ['2024/1/5', '', 'Bought snacks', '', 5,],
-            ['2024/1/10', 'Assisted in cleaning up dishes', '', 5, ''],
-            ['2024/1/14', 'Sorted out recyclables in the house.', '', 5, ''],
-        ]
+
         # Add sample data To Treeview
         for record in self.input_data:
             self.record_tree.insert('', END, values=record)
 
     # ------ Total remain allowance ----------------------------
         self.remain_frame = tb.LabelFrame(self.main_frame, text="🐖Record Total and Remaining🐖", style='success.TLabelframe')
-        self.remain_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 10))
+        self.remain_frame.pack(anchor="e", expand="yes", padx=20, pady=(0, 10))
 
-        self.remain_label = tb.Label(self.remain_frame, text="Total Allowance: ")
-        self.remain_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="e")
-        self.remain_label = tb.Label(self.remain_frame, text="Total Spending: ")
-        self.remain_label.grid(row=0, column=1, padx=10, pady=(10, 20))
-        self.remain_label = tb.Label(self.remain_frame, text="Remaining Allowance: ")
-        self.remain_label.grid(row=0, column=2, padx=10, pady=(10, 20))
+        self.remain_label = tb.Label(self.remain_frame, text="Total Allowance:   Total Spending:   Remaining Allowance:  ")
+        self.remain_label.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
 
-        self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=(calc_allowance, calc_spending, calc_remaining))
-        self.reload_btn.grid(row=0, column=3, padx=(0, 20), pady=(10, 20))
+        self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=calc_cost)
+        self.reload_btn.grid(row=0, column=1, padx=(0, 20), pady=(10, 20))
 
-    #------ Update and delete ----------------------------
+    # ------ Update and delete ----------------------------
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Record Commands🗑", style='warning.TLabelframe')
         self.btn_frame.pack(anchor="e", padx=20, pady=(0, 20))
         # Update button
