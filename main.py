@@ -21,6 +21,7 @@ class TinyCashBook(tb.Frame):
             ['2024/1/14', 'Sorted out recyclables in the house.', '', 5, ''],
         ]
 
+    # ------ Methods -------------------------------
         # Get date
         def get_date():
             # Grab The Date
@@ -81,7 +82,7 @@ class TinyCashBook(tb.Frame):
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
 
-    # ------ Calculate -------------------------------
+        # Calculate
         def calc_cost():
             total_allowance = 0
             total_spending = 0
