@@ -17,10 +17,11 @@ class TinyCashBook(tb.Frame):
         self.separator.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
         # Sample Data
         self.input_data = [
-            ['2024/1/1', 'Did some weeding in the garden', '', 10, '', ],
-            ['2024/1/5', '', 'Bought snacks', '', 5, ],
-            ['2024/1/10', 'Assisted in cleaning up dishes', '', 5, ''],
-            ['2024/1/14', 'Sorted out recyclables in the house', '', 5, ''],
+            ['2024/2/1', 'Monthly allowance', '', 20, '', ],
+            ['2024/2/5', '', 'Bought snacks', '', 5, ],
+            ['2024/2/10', 'Cleaning up dishes', '', 5, ''],
+            ['2024/2/13', 'Chocolate', '', 5, ''],
+            ['2024/2/14', 'Sorted out recyclables', '', 5, ''],
         ]
 
     # ------ Methods -------------------------------
@@ -90,6 +91,16 @@ class TinyCashBook(tb.Frame):
         def update_record():
             selected = self.record_tree.focus()
             self.record_tree.item(selected, text="", values=(self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(), self.amount_allowance_entry.get(),  self.amount_expense_entry.get(),))
+
+            new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(), self.amount_allowance_entry.get(), self.amount_expense_entry.get())
+            # Index that want to update
+            index_to_update = int(selected[1:]) - 1
+            # Update self.input_data list with new
+            self.input_data[index_to_update] = list(new_values)
+
+            with open("record_data.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(self.input_data)
             # Clear entry box
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
