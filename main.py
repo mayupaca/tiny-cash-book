@@ -41,11 +41,24 @@ class TinyCashBook(tb.Frame):
             self.amount_allowance_entry.delete(0, END)
             self.expense_item_entry.delete(0, END)
             self.amount_expense_entry.delete(0, END)
+            # Add to CSV file
+            with open("record_data.csv", "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(values)
 
         # Delete record
         def delete_record():
             delete_item = self.record_tree.selection()[0]
             self.record_tree.delete(delete_item)
+            # Identify the index of the row that want to delete from the CSV file(delete_item: I004)
+            # "I" is excluded and only the numeric part is retrieved, subtracting 1 to convert to a 0-based index
+            index_to_delete = int(delete_item[1:]) - 1
+            # Delete the corresponding row from the self.input_data list
+            del self.input_data[index_to_delete]
+            # Overwrite CSV file with new data
+            with open("record_data.csv", "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerows(self.input_data)
 
         # Clear entry box
         def clear_entries():
