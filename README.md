@@ -15,9 +15,7 @@ Tiny Cash Book is a simple allowance tracking application designed for children 
    ```
 2. Install the required packages.
 3. Run the application.
-   ```
-   python tiny_cash_book.py
-   ```
+  
    
 
 ### Usage
