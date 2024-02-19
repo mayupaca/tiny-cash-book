@@ -1,8 +1,10 @@
 from tkinter import *
+import tkinter as tk
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 import csv
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 class TinyCashBook(tb.Frame):
@@ -33,6 +35,7 @@ class TinyCashBook(tb.Frame):
         self.savings = 0
 
         self.count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
+
 
         # ------ Methods -------------------------------
         # Get date
@@ -173,7 +176,11 @@ class TinyCashBook(tb.Frame):
 
             fig, ax = plt.subplots()
             ax.pie(numbers, labels=items, autopct='%1.1f%%')
-            plt.show()
+            ax.set_title('Spending pie chart')
+
+            canvas = FigureCanvasTkAgg(fig, self.graph_frame)
+            canvas.draw()
+            canvas.get_tk_widget().grid(row=1, column=0, padx=10, pady=(10, 20), sticky="w")
 
         ##### GUI ################################################
         self.main_frame = tb.Frame(self)
@@ -300,10 +307,6 @@ class TinyCashBook(tb.Frame):
         # Pie chart label
         self.pie_label = tb.Label(self.graph_frame, text="Spending pie chart")
         self.pie_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="w")
-
-        # Line graph label
-        self.line_label = tb.Label(self.graph_frame, text="Spending line graph")
-        self.line_label.grid(row=0, column=1, padx=10, pady=(10, 20), sticky="w")
 
 
 if __name__ == "__main__":
