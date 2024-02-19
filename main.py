@@ -23,6 +23,9 @@ class TinyCashBook(tb.Frame):
             ['2024/2/13', 'Chocolate', '', 5, ''],
             ['2024/2/14', 'Sorted out recyclables', '', 5, ''],
         ]
+        self.total_allowance = 0
+        self.total_spending = 0
+        self.savings = 0
 
     # ------ Methods -------------------------------
         # Get date
@@ -51,7 +54,7 @@ class TinyCashBook(tb.Frame):
         def delete_record():
             delete_item = self.record_tree.selection()[0]
             self.record_tree.delete(delete_item)
-            # Identify the index of the row that want to delete from the CSV file(delete_item: I004)
+            # Identify the index of the row that want to delete from the CSV file(delete_item output: I004)
             # "I" is excluded and only the numeric part is retrieved, subtracting 1 to convert to a 0-based index
             index_to_delete = int(delete_item[1:]) - 1
             # Delete the corresponding row from the self.input_data list
@@ -63,6 +66,8 @@ class TinyCashBook(tb.Frame):
 
         # Clear entry box
         def clear_entries():
+            self.allowance_button.config(text="ADD", command=clear_entries)
+            self.expense_button.config(text="ADD", command=clear_entries)
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
@@ -72,6 +77,8 @@ class TinyCashBook(tb.Frame):
         # Select Record
         def select_record(e):
             # Clear entry box
+            self.allowance_button.config(text="UPDATE", command=update_record)
+            self.expense_button.config(text="UPDATE", command=update_record)
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
@@ -102,6 +109,8 @@ class TinyCashBook(tb.Frame):
                 writer = csv.writer(file)
                 writer.writerows(self.input_data)
             # Clear entry box
+            self.allowance_button.config(text="ADD", command=update_record)
+            self.expense_button.config(text="ADD", command=update_record)
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
@@ -110,19 +119,18 @@ class TinyCashBook(tb.Frame):
 
         # Calculate
         def calc_cost():
-            total_allowance = 0
-            total_spending = 0
-            savings = 0
+            self.total_allowance = 0
+            self.total_spending = 0
+            self.savings = 0
             for item in self.input_data:
                 if item[3] != '':
-                    total_allowance += int(item[3])
+                    self.total_allowance += int(item[3])
                 if item[4] != '':
-                    total_spending += int(item[4])
-                if item[3] != '':
-                    savings += int(item[3])
-                elif item[4] != '':
-                    savings -= int(item[4])
-            self.remain_label.config(text=f"Total Allowance:  ${total_allowance}   Total Spending:  ${total_spending}   Savings:  ${savings}")
+                    self.total_spending += int(item[4])
+                else:
+                    self.savings = self.total_allowance - self.total_spending
+
+            self.remain_label.config(text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_allowance}   Savings:  ${self.savings}")
 
     ##### GUI ################################################
         self.main_frame = tb.Frame(self)
@@ -210,7 +218,7 @@ class TinyCashBook(tb.Frame):
         self.remain_frame = tb.LabelFrame(self.main_frame, text="🐖Balance🐖", style='success.TLabelframe')
         self.remain_frame.pack(anchor="w", expand="yes", padx=20, pady=(0, 10))
 
-        self.remain_label = tb.Label(self.remain_frame, text="Total Allowance:   Total Spending:   Savings:  ")
+        self.remain_label = tb.Label(self.remain_frame, text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_allowance}   Savings:  ${self.savings}")
         self.remain_label.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
 
         self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=calc_cost)
@@ -220,13 +228,13 @@ class TinyCashBook(tb.Frame):
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Commands🗑", style='light.TLabelframe')
         self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
         # Update button
-        self.update_btn = tb.Button(self.btn_frame, text="UPDATE", width=10, style="primary", command=update_record)
-        self.update_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
+        self.graph_btn = tb.Button(self.btn_frame, text="SHOW GRAPH", width=15, style="primary", command=update_record)
+        self.graph_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
         # Delete button
-        self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=10, style="danger", command=delete_record)
+        self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=15, style="danger", command=delete_record)
         self.delete_btn.grid(row=0, column=1, padx=(0,20), pady=(10, 20))
         # Clear button
-        self.clear_btn = tb.Button(self.btn_frame, text="CLEAR", width=10, style="secondary", command=clear_entries)
+        self.clear_btn = tb.Button(self.btn_frame, text="CLEAR", width=15, style="secondary", command=clear_entries)
         self.clear_btn.grid(row=0, column=2, padx=(0,20), pady=(10, 20))
 
         # Bind the treeview
