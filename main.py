@@ -18,9 +18,9 @@ class TinyCashBook(tb.Frame):
         # Sample Data
         self.input_data = [
             ['2024/2/1', 'Monthly allowance', '', 20, '', ],
-            ['2024/2/5', '', 'Bought snacks', '', 5, ],
+            ['2024/2/5', '', 'Snacks', '', 5, ],
             ['2024/2/10', 'Cleaning up dishes', '', 5, ''],
-            ['2024/2/13', 'Chocolate', '', 5, ''],
+            ['2024/2/13', '', 'Snacks', '', 5, ],
             ['2024/2/14', 'Sorted out recyclables', '', 5, ''],
         ]
         self.total_allowance = 0
@@ -35,7 +35,7 @@ class TinyCashBook(tb.Frame):
 
         # Add record
         def add_record():
-            values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(),
+            values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
             self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
             self.record_tree.insert("", END, values=values)
             self.input_data.append(values)
@@ -43,7 +43,7 @@ class TinyCashBook(tb.Frame):
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
-            self.expense_item_entry.delete(0, END)
+            self.expense_combo.delete(0, END)
             self.amount_expense_entry.delete(0, END)
             # Add to CSV file
             with open("record_data.csv", "a", newline="") as file:
@@ -63,6 +63,14 @@ class TinyCashBook(tb.Frame):
             with open("record_data.csv", "w", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerows(self.input_data)
+            self.allowance_button.config(text="ADD", command=clear_entries)
+            self.expense_button.config(text="ADD", command=clear_entries)
+            # Clear entry box
+            self.date.entry.delete(0, END)
+            self.allowance_source_entry.delete(0, END)
+            self.amount_allowance_entry.delete(0, END)
+            self.expense_combo.delete(0, END)
+            self.amount_expense_entry.delete(0, END)
 
         # Clear entry box
         def clear_entries():
@@ -71,7 +79,7 @@ class TinyCashBook(tb.Frame):
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
-            self.expense_item_entry.delete(0, END)
+            self.expense_combo.delete(0, END)
             self.amount_expense_entry.delete(0, END)
 
         # Select Record
@@ -82,7 +90,7 @@ class TinyCashBook(tb.Frame):
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
-            self.expense_item_entry.delete(0, END)
+            self.expense_combo.delete(0, END)
             self.amount_expense_entry.delete(0, END)
             # Get record
             selected = self.record_tree.focus()
@@ -91,15 +99,15 @@ class TinyCashBook(tb.Frame):
             self.date.entry.insert(0, self.values[0])
             self.allowance_source_entry.insert(0, self.values[1])
             self.amount_allowance_entry.insert(0, self.values[3])
-            self.expense_item_entry.insert(0, self.values[2])
+            self.expense_combo.insert(0, self.values[2])
             self.amount_expense_entry.insert(0, self.values[4])
 
         # Update record
         def update_record():
             selected = self.record_tree.focus()
-            self.record_tree.item(selected, text="", values=(self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(), self.amount_allowance_entry.get(),  self.amount_expense_entry.get(),))
+            self.record_tree.item(selected, text="", values=(self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(), self.amount_allowance_entry.get(),  self.amount_expense_entry.get(),))
 
-            new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_item_entry.get(), self.amount_allowance_entry.get(), self.amount_expense_entry.get())
+            new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(), self.amount_allowance_entry.get(), self.amount_expense_entry.get())
             # Index that want to update
             index_to_update = int(selected[1:]) - 1
             # Update self.input_data list with new
@@ -114,7 +122,7 @@ class TinyCashBook(tb.Frame):
             self.date.entry.delete(0, END)
             self.allowance_source_entry.delete(0, END)
             self.amount_allowance_entry.delete(0, END)
-            self.expense_item_entry.delete(0, END)
+            self.expense_combo.delete(0, END)
             self.amount_expense_entry.delete(0, END)
 
         # Calculate
@@ -125,12 +133,12 @@ class TinyCashBook(tb.Frame):
             for item in self.input_data:
                 if item[3] != '':
                     self.total_allowance += int(item[3])
+                    self.savings += int(item[3])
                 if item[4] != '':
                     self.total_spending += int(item[4])
-                else:
-                    self.savings = self.total_allowance - self.total_spending
+                    self.savings -= int(item[4])
 
-            self.remain_label.config(text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_allowance}   Savings:  ${self.savings}")
+            self.remain_label.config(text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_spending}   Savings:  ${self.savings}")
 
     ##### GUI ################################################
         self.main_frame = tb.Frame(self)
@@ -177,8 +185,16 @@ class TinyCashBook(tb.Frame):
         self.expense_item_label = tb.Label(self.expense_frame, text="🍟What did you use it for?")
         self.expense_item_label.grid(row=2, column=0, padx=10, pady=(10, 20), sticky="w")
         # Expense entry
-        self.expense_item_entry = tb.Entry(self.expense_frame, style='danger')
-        self.expense_item_entry.grid(row=2, column=1, padx=10, pady=(10, 20))
+        # Dropdown options
+        self.items = ["", "Snacks", "Books", "Game/Toy", "Gifts", "Clothing"]
+        # Create Combobox
+        self.expense_combo = tb.Combobox(self.expense_frame, style="danger", values=self.items)
+        self.expense_combo.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+        # Set Combo Default
+        self.expense_combo.current(0)
+
+        # self.expense_item_entry = tb.Entry(self.expense_frame, style='danger')
+        # self.expense_item_entry.grid(row=2, column=1, padx=10, pady=(10, 20))
         # Amount label
         self.amount_expense_label = Label(self.expense_frame, text="💴Amount (How much?)")
         self.amount_expense_label.grid(row=2, column=2, padx=10, pady=(10, 20), sticky="w")
@@ -224,7 +240,7 @@ class TinyCashBook(tb.Frame):
         self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=calc_cost)
         self.reload_btn.grid(row=0, column=1, padx=(0, 20), pady=(10, 20))
 
-    # ------ Update and delete ----------------------------
+    # ------ Commands ----------------------------
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Commands🗑", style='light.TLabelframe')
         self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
         # Update button
@@ -239,6 +255,20 @@ class TinyCashBook(tb.Frame):
 
         # Bind the treeview
         self.record_tree.bind("<ButtonRelease-1>", select_record)
+
+    # ------ Show Graphs ----------------------------
+        self.graph_frame = tb.LabelFrame(self.main_frame, text="📈Graphs📊", style='info.TLabelframe')
+        self.graph_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+
+        # Pie label
+        self.pie_label = tb.Label(self.graph_frame, text="Spending pie chart")
+        self.pie_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="w")
+
+        # Pie label
+        self.line_label = tb.Label(self.graph_frame, text="Spending line graph")
+        self.line_label.grid(row=0, column=1, padx=10, pady=(10, 20), sticky="w")
+
+
 
 if __name__ == "__main__":
     app = tb.Window("TinyCashBook", "superhero")
