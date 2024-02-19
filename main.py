@@ -151,7 +151,7 @@ class TinyCashBook(tb.Frame):
             self.remain_label.config(
                 text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_spending}   Savings:  ${self.savings}")
 
-        def show_graphs():
+        def show_graph():
             self.count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
             with open("record_data.csv", "r") as file:
                 reader = csv.reader(file)
