@@ -2,6 +2,7 @@ from tkinter import *
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 import csv
+import matplotlib.pyplot as plt
 
 
 class TinyCashBook(tb.Frame):
@@ -17,17 +18,23 @@ class TinyCashBook(tb.Frame):
         self.separator.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
         # Sample Data
         self.input_data = [
-            ['2024/2/1', 'Monthly allowance', '', 20, '', ],
-            ['2024/2/5', '', 'Snacks', '', 5, ],
-            ['2024/2/10', 'Cleaning up dishes', '', 5, ''],
-            ['2024/2/13', '', 'Snacks', '', 5, ],
-            ['2024/2/14', 'Sorted out recyclables', '', 5, ''],
+            ['2024/02/01', 'Gift from Grand mother', '', 20, ''],
+            ['2024/02/04', 'Weekly allowance', '', 5, ''],
+            ['2024/02/06', '', 'Gifts', '', 15],
+            ['2024/02/07', '', 'Snacks', '', 3],
+            ['2024/02/08', '', 'Books', '', 5],
+            ['2024/02/10', 'Cleaning up dishes', '', 5, ''],
+            ['2024/02/11', 'Weekly allowance', '', '5', ''],
+            ['2024/02/13', '', 'Snacks', '', 5, ],
+            ['2024/02/14', 'Sorted out recyclables', '', 5, ''],
         ]
         self.total_allowance = 0
         self.total_spending = 0
         self.savings = 0
 
-    # ------ Methods -------------------------------
+        self.count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
+
+        # ------ Methods -------------------------------
         # Get date
         def get_date():
             # Grab The Date
@@ -36,7 +43,7 @@ class TinyCashBook(tb.Frame):
         # Add record
         def add_record():
             values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
-            self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
+                      self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
             self.record_tree.insert("", END, values=values)
             self.input_data.append(values)
             # Clear entry box
@@ -105,9 +112,12 @@ class TinyCashBook(tb.Frame):
         # Update record
         def update_record():
             selected = self.record_tree.focus()
-            self.record_tree.item(selected, text="", values=(self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(), self.amount_allowance_entry.get(),  self.amount_expense_entry.get(),))
+            self.record_tree.item(selected, text="", values=(
+            self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
+            self.amount_allowance_entry.get(), self.amount_expense_entry.get(),))
 
-            new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(), self.amount_allowance_entry.get(), self.amount_expense_entry.get())
+            new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
+                          self.amount_allowance_entry.get(), self.amount_expense_entry.get())
             # Index that want to update
             index_to_update = int(selected[1:]) - 1
             # Update self.input_data list with new
@@ -138,12 +148,37 @@ class TinyCashBook(tb.Frame):
                     self.total_spending += int(item[4])
                     self.savings -= int(item[4])
 
-            self.remain_label.config(text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_spending}   Savings:  ${self.savings}")
+            self.remain_label.config(
+                text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_spending}   Savings:  ${self.savings}")
 
-    ##### GUI ################################################
+        def show_graphs():
+            self.count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
+            with open("record_data.csv", "r") as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if row[2] != "":
+                        if row[2] == "Snacks":
+                            self.count_items["Snacks"] += 1
+                        elif row[2] == "Books":
+                            self.count_items["Books"] += 1
+                        elif row[2] == "Game/Toy":
+                            self.count_items["Game/Toy"] += 1
+                        elif row[2] == "Gifts":
+                            self.count_items["Gifts"] += 1
+                        elif row[2] == "Clothing":
+                            self.count_items["Clothing"] += 1
+
+            numbers = list(self.count_items.values())
+            items = list(self.count_items.keys())
+
+            fig, ax = plt.subplots()
+            ax.pie(numbers, labels=items, autopct='%1.1f%%')
+            plt.show()
+
+        ##### GUI ################################################
         self.main_frame = tb.Frame(self)
         self.main_frame.pack(padx=10)
-    # ------ Date Entry -------------------------------
+        # ------ Date Entry -------------------------------
         self.date_entry = tb.LabelFrame(self.main_frame, text="📆Date📆", style='warning.TLabelframe')
         self.date_entry.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -156,7 +191,7 @@ class TinyCashBook(tb.Frame):
         self.date_label = tb.Label(self.date_entry, text="You Picked:  ")
         self.date_label.grid(row=0, column=3, padx=10, pady=(10, 20))
 
-    # ------ Input frame ------------------------------
+        # ------ Input frame ------------------------------
         # Allowance form
         self.allowance_frame = tb.LabelFrame(self.main_frame, text="💰Allowance💰", style='info.TLabelframe')
         self.allowance_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
@@ -177,7 +212,7 @@ class TinyCashBook(tb.Frame):
         self.allowance_button = tb.Button(self.allowance_frame, text="ADD", width=10, style="info", command=add_record)
         self.allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-    # ------ Expense form ----------------------------
+        # ------ Expense form ----------------------------
         self.expense_frame = tb.LabelFrame(self.main_frame, text="💸Spending💸", style='danger.TLabelframe')
         self.expense_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -205,13 +240,14 @@ class TinyCashBook(tb.Frame):
         self.expense_button = tb.Button(self.expense_frame, text="ADD", width=10, style="danger", command=add_record)
         self.expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
-    # ------ Record treeview --------------------------
+        # ------ Record treeview --------------------------
         self.tree_frame = tb.LabelFrame(self.main_frame, text="💿History💿", style='success.TLabelframe')
         self.tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 0))
         self.columns = ("date", "source", "item", "allowance", "spending")
 
         # Create Treeview
-        self.record_tree = tb.Treeview(self.tree_frame, style="success", selectmode="extended", columns=self.columns, show="headings")
+        self.record_tree = tb.Treeview(self.tree_frame, style="success", selectmode="extended", columns=self.columns,
+                                       show="headings")
         self.record_tree.pack(fill="x", expand="yes", padx=10, pady=10)
         # Format columns
         self.record_tree.column('date', width=80, anchor="w")
@@ -230,44 +266,44 @@ class TinyCashBook(tb.Frame):
         for record in self.input_data:
             self.record_tree.insert('', END, values=record)
 
-    # ------ Total remain allowance ----------------------------
+        # ------ Total remain allowance ----------------------------
         self.remain_frame = tb.LabelFrame(self.main_frame, text="🐖Balance🐖", style='success.TLabelframe')
         self.remain_frame.pack(anchor="w", expand="yes", padx=20, pady=(0, 10))
 
-        self.remain_label = tb.Label(self.remain_frame, text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_allowance}   Savings:  ${self.savings}")
+        self.remain_label = tb.Label(self.remain_frame,
+                                     text=f"Total Allowance:  ${self.total_allowance}   Total Spending:  ${self.total_allowance}   Savings:  ${self.savings}")
         self.remain_label.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
 
         self.reload_btn = tb.Button(self.remain_frame, text="RELOAD", width=10, style="success", command=calc_cost)
         self.reload_btn.grid(row=0, column=1, padx=(0, 20), pady=(10, 20))
 
-    # ------ Commands ----------------------------
+        # ------ Commands ----------------------------
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Commands🗑", style='light.TLabelframe')
         self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
         # Update button
-        self.graph_btn = tb.Button(self.btn_frame, text="SHOW GRAPH", width=15, style="primary", command=update_record)
+        self.graph_btn = tb.Button(self.btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=show_graphs)
         self.graph_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
         # Delete button
         self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=15, style="danger", command=delete_record)
-        self.delete_btn.grid(row=0, column=1, padx=(0,20), pady=(10, 20))
+        self.delete_btn.grid(row=0, column=1, padx=(0, 20), pady=(10, 20))
         # Clear button
         self.clear_btn = tb.Button(self.btn_frame, text="CLEAR", width=15, style="secondary", command=clear_entries)
-        self.clear_btn.grid(row=0, column=2, padx=(0,20), pady=(10, 20))
+        self.clear_btn.grid(row=0, column=2, padx=(0, 20), pady=(10, 20))
 
         # Bind the treeview
         self.record_tree.bind("<ButtonRelease-1>", select_record)
 
-    # ------ Show Graphs ----------------------------
+        # ------ Show Graphs ----------------------------
         self.graph_frame = tb.LabelFrame(self.main_frame, text="📈Graphs📊", style='info.TLabelframe')
         self.graph_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
-        # Pie label
+        # Pie chart label
         self.pie_label = tb.Label(self.graph_frame, text="Spending pie chart")
         self.pie_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="w")
 
-        # Pie label
+        # Line graph label
         self.line_label = tb.Label(self.graph_frame, text="Spending line graph")
         self.line_label.grid(row=0, column=1, padx=10, pady=(10, 20), sticky="w")
-
 
 
 if __name__ == "__main__":
