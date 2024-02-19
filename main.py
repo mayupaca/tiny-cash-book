@@ -281,7 +281,7 @@ class TinyCashBook(tb.Frame):
         self.btn_frame = tb.LabelFrame(self.main_frame, text="🖋Commands🗑", style='light.TLabelframe')
         self.btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
         # Update button
-        self.graph_btn = tb.Button(self.btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=show_graphs)
+        self.graph_btn = tb.Button(self.btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=show_graph)
         self.graph_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
         # Delete button
         self.delete_btn = tb.Button(self.btn_frame, text="DELETE", width=15, style="danger", command=delete_record)
