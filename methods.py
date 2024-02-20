@@ -118,7 +118,6 @@ def show_graph(self):
     fig, ax = plt.subplots(figsize=(3, 3))
     if numbers:  # 数値リストが空でない場合のみ描画
         ax.pie(numbers, labels=items, autopct='%1.1f%%')
-        ax.set_title('Pie Chart')
         canvas = FigureCanvasTkAgg(fig, self.graph_frame)
         canvas.draw()
         canvas.get_tk_widget().grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
