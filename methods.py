@@ -1,0 +1,93 @@
+import csv
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+
+def get_date(self):
+    self.date_label.config(text=f"You Picked:  {self.date.entry.get()}")
+
+
+def add_record(self):
+    values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
+              self.amount_allowance_entry.get(), self.amount_expense_entry.get(),)
+    self.record_tree.insert("", "end", values=values)
+    self.input_data.append(values)
+    clear_entries(self)
+    with open("record_data.csv", "a", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(values)
+
+
+def delete_record(self):
+    try:
+        selected_item = self.record_tree.selection()[0]
+        self.record_tree.delete(selected_item)
+        index_to_delete = int(selected_item[1:]) - 1
+        del self.input_data[index_to_delete]
+        with open("record_data.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(self.input_data)
+        clear_entries(self)
+    except IndexError:
+        pass
+
+
+def clear_entries(self):
+    self.date.entry.delete(0, "end")
+    self.allowance_source_entry.delete(0, "end")
+    self.amount_allowance_entry.delete(0, "end")
+    self.expense_combo.set("")
+    self.amount_expense_entry.delete(0, "end")
+
+
+def select_record(self, event):
+    clear_entries(self)
+    selected = self.record_tree.focus()
+    values = self.record_tree.item(selected, "values")
+    self.date.entry.insert(0, values[0])
+    self.allowance_source_entry.insert(0, values[1])
+    self.amount_allowance_entry.insert(0, values[3])
+    self.expense_combo.set(values[2])
+    self.amount_expense_entry.insert(0, values[4])
+
+
+def update_record(self):
+    selected = self.record_tree.focus()
+    new_values = (self.date.entry.get(), self.allowance_source_entry.get(), self.expense_combo.get(),
+                  self.amount_allowance_entry.get(), self.amount_expense_entry.get())
+    self.record_tree.item(selected, values=new_values)
+    index_to_update = int(selected[1:]) - 1
+    self.input_data[index_to_update] = list(new_values)
+    with open("record_data.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerows(self.input_data)
+    clear_entries(self)
+
+
+def calc_cost(self):
+    total_allowance = 0
+    total_spending = 0
+    savings = 0
+    for item in self.input_data:
+        if item[3] != '':
+            total_allowance += int(item[3])
+            savings += int(item[3])
+        if item[4] != '':
+            total_spending += int(item[4])
+            savings -= int(item[4])
+    self.remain_label.config(text=f"Total Allowance:  ${total_allowance}   Total Spending:  ${total_spending}   Savings:  ${savings}")
+
+
+def show_graph(self):
+    count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
+    for item in self.input_data:
+        if item[2] in count_items:
+            count_items[item[2]] += 1
+    numbers = list(count_items.values())
+    items = list(count_items.keys())
+    fig, ax = plt.subplots()
+    ax.pie(numbers, labels=items, autopct='%1.1f%%')
+    ax.set_title('Spending pie chart')
+    canvas = FigureCanvasTkAgg(fig, self.graph_frame)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=1, column=0, padx=10, pady=(10, 20), sticky="w")
