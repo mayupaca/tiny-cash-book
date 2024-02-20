@@ -22,9 +22,10 @@ class TinyCashBook(tb.Frame):
             ['2024/02/14', 'Sorted out recyclables', '', 5, ''],
         ]
 
-        self.create_widgets()
+        self.widgets()
 
-    def create_widgets(self):
+    # Create widgets
+    def widgets(self):
         self.app_title = tb.Label(self, text="👛Tiny Cash Book👛", font=("Helvetica", 18), foreground="#d0d0d0")
         self.app_title.pack(padx=50, pady=(0, 5), anchor="w")
         self.separator = tb.Separator(self, style="light")
@@ -33,15 +34,16 @@ class TinyCashBook(tb.Frame):
         self.main_frame = tb.Frame(self)
         self.main_frame.pack(padx=10)
 
-        self.date_entry = self.create_date_entry(self.main_frame)
-        self.allowance_frame = self.create_allowance_frame(self.main_frame)
-        self.expense_frame = self.create_expense_frame(self.main_frame)
-        self.tree_frame = self.create_tree_frame(self.main_frame)
-        self.remain_frame = self.create_remain_frame(self.main_frame)
-        self.btn_frame = self.create_btn_frame(self.main_frame)
-        self.graph_frame = self.create_graph_frame(self.main_frame)
+        self.date_entry = self.date_entry(self.main_frame)
+        self.allowance_frame = self.allowance_frame(self.main_frame)
+        self.expense_frame = self.expense_frame(self.main_frame)
+        self.tree_frame = self.tree_frame(self.main_frame)
+        self.remain_frame = self.remain_frame(self.main_frame)
+        self.btn_frame = self.btn_frame(self.main_frame)
+        self.graph_frame = self.graph_frame(self.main_frame)
 
-    def create_date_entry(self, parent):
+    # Create date entry frame
+    def date_entry(self, parent):
         date_entry = tb.LabelFrame(parent, text="📆Date📆", style='warning.TLabelframe')
         date_entry.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -56,7 +58,8 @@ class TinyCashBook(tb.Frame):
 
         return date_entry
 
-    def create_allowance_frame(self, parent):
+    # Create allowance frame
+    def allowance_frame(self, parent):
         allowance_frame = tb.LabelFrame(parent, text="💰Allowance💰", style='info.TLabelframe')
         allowance_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -72,12 +75,13 @@ class TinyCashBook(tb.Frame):
         self.amount_allowance_entry = tb.Entry(allowance_frame, style='info')
         self.amount_allowance_entry.grid(row=1, column=3, padx=10, pady=(10, 20))
 
-        allowance_button = tb.Button(allowance_frame, text="ADD", width=10, style="info", command=lambda: add_record(self))
-        allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
+        self.allowance_button = tb.Button(allowance_frame, text="ADD", width=10, style="info", command=lambda: add_record(self))
+        self.allowance_button.grid(row=1, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
         return allowance_frame
 
-    def create_expense_frame(self, parent):
+    # Create expense frame
+    def expense_frame(self, parent):
         expense_frame = tb.LabelFrame(parent, text="💸Spending💸", style='danger.TLabelframe')
         expense_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
@@ -95,12 +99,13 @@ class TinyCashBook(tb.Frame):
         self.amount_expense_entry = tb.Entry(expense_frame, style='danger')
         self.amount_expense_entry.grid(row=2, column=3, padx=10, pady=(10, 20))
 
-        expense_button = tb.Button(expense_frame, text="ADD", width=10, style="danger", command=lambda: add_record(self))
-        expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
+        self.expense_button = tb.Button(expense_frame, text="ADD", width=10, style="danger", command=lambda: add_record(self))
+        self.expense_button.grid(row=2, column=4, columnspan=2, padx=20, pady=(10, 20), sticky="w")
 
         return expense_frame
 
-    def create_tree_frame(self, parent):
+    # Create treeview frame
+    def tree_frame(self, parent):
         tree_frame = tb.LabelFrame(parent, text="💿History💿", style='success.TLabelframe')
         tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 0))
         columns = ("date", "source", "item", "allowance", "spending")
@@ -127,7 +132,8 @@ class TinyCashBook(tb.Frame):
 
         return tree_frame
 
-    def create_remain_frame(self, parent):
+    # Create remain frame
+    def remain_frame(self, parent):
         remain_frame = tb.LabelFrame(parent, text="🐖Balance🐖", style='success.TLabelframe')
         remain_frame.pack(anchor="w", expand="yes", padx=20, pady=(0, 10))
 
@@ -139,7 +145,8 @@ class TinyCashBook(tb.Frame):
 
         return remain_frame
 
-    def create_btn_frame(self, parent):
+    # Create button frame
+    def btn_frame(self, parent):
         btn_frame = tb.LabelFrame(parent, text="🖋Commands🗑", style='light.TLabelframe')
         btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
 
@@ -154,11 +161,13 @@ class TinyCashBook(tb.Frame):
 
         return btn_frame
 
-    def create_graph_frame(self, parent):
+    # Create graph frame
+    def graph_frame(self, parent):
         graph_frame = tb.LabelFrame(parent, text="📈Graphs📊", style='info.TLabelframe')
         graph_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
 
-        pie_label = tb.Label(graph_frame, text="Spending pie chart")
+        pie_label = tb.Label(graph_frame, text="")
         pie_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="w")
 
         return graph_frame
+
