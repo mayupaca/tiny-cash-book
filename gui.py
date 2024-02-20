@@ -1,4 +1,3 @@
-# gui.py
 from tkinter import *
 import ttkbootstrap as tb
 from ttkbootstrap.constants import *
