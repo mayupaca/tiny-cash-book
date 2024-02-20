@@ -100,16 +100,28 @@ def calc_cost(self):
 
 
 def show_graph(self):
+    # 0%のアイテムを除外するために、カウントが0より大きいアイテムのみをフィルタリング
     count_items = {"Snacks": 0, "Books": 0, "Game/Toy": 0, "Gifts": 0, "Clothing": 0}
     for item in self.input_data:
         if item[2] in count_items:
             count_items[item[2]] += 1
-    numbers = list(count_items.values())
-    items = list(count_items.keys())
-    fig, ax = plt.subplots()
-    ax.pie(numbers, labels=items, autopct='%1.1f%%')
-    ax.set_title('Spending pie chart')
-    canvas = FigureCanvasTkAgg(fig, self.graph_frame)
-    canvas.draw()
-    canvas.get_tk_widget().grid(row=1, column=0, padx=10, pady=(10, 20), sticky="w")
+
+    # Dictionary only items grater than 0
+    filtered_items = {}
+    for key, value in count_items.items():
+        if value > 0:
+            filtered_items[key] = value
+
+    numbers = list(filtered_items.values())
+    items = list(filtered_items.keys())
+
+    fig, ax = plt.subplots(figsize=(3, 3))
+    if numbers:  # 数値リストが空でない場合のみ描画
+        ax.pie(numbers, labels=items, autopct='%1.1f%%')
+        ax.set_title('Pie Chart')
+        canvas = FigureCanvasTkAgg(fig, self.graph_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
+    else:
+        print("No data to display")
 

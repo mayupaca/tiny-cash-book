@@ -21,7 +21,6 @@ class TinyCashBook(tb.Frame):
             ['2024/02/13', '', 'Snacks', '', 5, ],
             ['2024/02/14', 'Sorted out recyclables', '', 5, ''],
         ]
-
         self.widgets()
 
     # Create widgets
@@ -164,10 +163,10 @@ class TinyCashBook(tb.Frame):
     # Create graph frame
     def graph_frame(self, parent):
         graph_frame = tb.LabelFrame(parent, text="📈Graphs📊", style='info.TLabelframe')
-        graph_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        graph_frame.pack(padx=20, pady=(0, 20), anchor="w")
 
         pie_label = tb.Label(graph_frame, text="")
-        pie_label.grid(row=0, column=0, padx=10, pady=(10, 20), sticky="w")
+        pie_label.grid(row=0, column=0)
 
         return graph_frame
 
