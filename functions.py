@@ -106,7 +106,7 @@ def show_graph(self):
         if item[2] in count_items:
             count_items[item[2]] += 1
 
-    # Dictionary only items grater than 0
+    # Dictionary only items greater than 0
     filtered_items = {}
     for key, value in count_items.items():
         if value > 0:

@@ -1,7 +1,9 @@
 from tkinter import *
 import ttkbootstrap as tb
-from functions import get_date, add_record, delete_record, clear_entries, select_record, update_record, calc_cost, show_graph
 from ttkbootstrap import *
+from functions import get_date, add_record, delete_record, clear_entries, select_record, update_record, calc_cost, show_graph
+from data import sample_data
+
 
 
 class TinyCashBook(tb.Frame):
@@ -9,17 +11,7 @@ class TinyCashBook(tb.Frame):
         super().__init__(master, padding=(20, 20))
         self.pack(fill=BOTH, expand=YES)
 
-        self.input_data = [
-            ['2024/02/01', 'Gift from Grand mother', '', 30, ''],
-            ['2024/02/04', 'Weekly allowance', '', 5, ''],
-            ['2024/02/06', '', 'Gifts', '', 15],
-            ['2024/02/07', '', 'Snacks', '', 3],
-            ['2024/02/08', '', 'Books', '', 5],
-            ['2024/02/10', 'Cleaning up dishes', '', 5, ''],
-            ['2024/02/11', 'Weekly allowance', '', '5', ''],
-            ['2024/02/13', '', 'Snacks', '', 5, ],
-
-        ]
+        self.sample_data = sample_data()
         self.widgets()
 
     # Create widgets
@@ -123,7 +115,7 @@ class TinyCashBook(tb.Frame):
         self.record_tree.heading('allowance', text="Allowance", anchor="e")
         self.record_tree.heading('spending', text="Spending", anchor="e")
 
-        for record in self.input_data:
+        for record in self.sample_data:
             self.record_tree.insert('', END, values=record)
 
         self.record_tree.bind("<ButtonRelease-1>", lambda event: select_record(self, event))
