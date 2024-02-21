@@ -5,7 +5,6 @@ from functions import get_date, add_record, delete_record, clear_entries, select
 from data import sample_data
 
 
-
 class TinyCashBook(tb.Frame):
     def __init__(self, master):
         super().__init__(master, padding=(20, 20))
