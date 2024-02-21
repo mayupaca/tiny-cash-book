@@ -1,7 +1,6 @@
 from tkinter import *
 import ttkbootstrap as tb
-from ttkbootstrap.constants import *
-from methods import get_date, add_record, delete_record, clear_entries, select_record, update_record, calc_cost, show_graph
+from functions import get_date, add_record, delete_record, clear_entries, select_record, update_record, calc_cost, show_graph
 from ttkbootstrap import *
 
 
@@ -11,7 +10,7 @@ class TinyCashBook(tb.Frame):
         self.pack(fill=BOTH, expand=YES)
 
         self.input_data = [
-            ['2024/02/01', 'Gift from Grand mother', '', 20, ''],
+            ['2024/02/01', 'Gift from Grand mother', '', 30, ''],
             ['2024/02/04', 'Weekly allowance', '', 5, ''],
             ['2024/02/06', '', 'Gifts', '', 15],
             ['2024/02/07', '', 'Snacks', '', 3],
@@ -19,7 +18,7 @@ class TinyCashBook(tb.Frame):
             ['2024/02/10', 'Cleaning up dishes', '', 5, ''],
             ['2024/02/11', 'Weekly allowance', '', '5', ''],
             ['2024/02/13', '', 'Snacks', '', 5, ],
-            ['2024/02/14', 'Sorted out recyclables', '', 5, ''],
+
         ]
         self.widgets()
 
