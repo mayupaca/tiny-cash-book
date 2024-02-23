@@ -115,12 +115,12 @@ def show_graph(self):
         if value > 0:
             filtered_items[key] = value
 
-    numbers = list(filtered_items.values())
+    counts = list(filtered_items.values())
     items = list(filtered_items.keys())
 
     fig, ax = plt.subplots(figsize=(3.5, 3))
-    if numbers:  # 数値リストが空でない場合のみ描画
-        ax.pie(numbers, labels=items, autopct='%1.1f%%')
+    if counts:  # 数値リストが空でない場合のみ描画
+        ax.pie(counts, labels=items, autopct='%1.1f%%')
         canvas = FigureCanvasTkAgg(fig, self.graph_frame)
         canvas.draw()
         canvas.get_tk_widget().grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
