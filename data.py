@@ -43,13 +43,12 @@ def sample_data():
         ['2024/01/30', '', 'Clothing', '', 5],
 
         # February
-        ['2024/02/01', 'Gift from Grand mother', '', 20, ''],
+        ['2024/02/01', 'Gift from grandma', '', 20, ''],
         ['2024/02/04', 'Weekly allowance', '', 5, ''],
         ['2024/02/07', '', 'Snacks', '', 3],
         ['2024/02/08', '', 'Books', '', 5],
         ['2024/02/11', 'Weekly allowance', '', '5', ''],
         ['2024/02/13', '', 'Snacks', '', 5, ],
         ['2024/02/14', 'Sorted out recyclables', '', 5, ''],
-        ['2024/02/18', 'Weekly allowance', '', 5, ''],
     ]
 

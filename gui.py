@@ -140,14 +140,14 @@ class TinyCashBook(tb.Frame):
         btn_frame = tb.LabelFrame(parent, text="🖋Commands🗑", style='dark')
         btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
 
-        graph_btn = tb.Button(btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=lambda: show_graph(self))
-        graph_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
-
         delete_btn = tb.Button(btn_frame, text="DELETE", width=15, style="danger", command=lambda: delete_record(self))
         delete_btn.grid(row=0, column=1, padx=(0, 20), pady=(10, 20))
 
         clear_btn = tb.Button(btn_frame, text="CLEAR", width=15, style="secondary", command=lambda: clear_entries(self))
         clear_btn.grid(row=0, column=2, padx=(0, 20), pady=(10, 20))
+
+        graph_btn = tb.Button(btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=lambda: show_graph(self))
+        graph_btn.grid(row=0, column=0, padx=20, pady=(10, 20))
 
         return btn_frame
 
