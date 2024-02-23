@@ -7,6 +7,7 @@ from data import sample_data
 
 class TinyCashBook(tb.Frame):
     def __init__(self, master):
+        # Calling the constructor of the parent class(tb.Frame)
         super().__init__(master, padding=(20, 20))
         self.pack(fill=BOTH, expand=YES)
 
@@ -18,7 +19,7 @@ class TinyCashBook(tb.Frame):
         self.app_title = tb.Label(self, text="👛Tiny Cash Book👛", font=("Helvetica", 18), foreground="#d0d0d0")
         self.app_title.pack(padx=50, pady=(0, 5), anchor="w")
         self.separator = tb.Separator(self, style="light")
-        self.separator.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        self.separator.pack(fill="x", padx=20, pady=(0, 20))
 
         self.main_frame = tb.Frame(self)
         self.main_frame.pack(padx=10)
@@ -32,13 +33,13 @@ class TinyCashBook(tb.Frame):
         self.graph_frame = self.graph_frame(self.main_frame)
 
     # Create date entry frame
-    def date_entry(self, parent):
-        date_entry = tb.LabelFrame(parent, text="📆Date📆", style='warning.TLabelframe')
-        date_entry.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+    def date_entry(self, parent): # Taking a parent argument, I can pecify which parent widget the method belongs to for the widget it generates (in this case, an entry widget for entering a date).
+        date_entry = tb.LabelFrame(parent, text="📆Date📆", style='warning')
+        date_entry.pack(fill="x", padx=20, pady=(0, 20))
 
         self.date = tb.DateEntry(date_entry, bootstyle="warning", firstweekday=6, dateformat="%Y/%m/%d")
         self.date.grid(row=0, column=0, padx=(20, 0), pady=(10, 20))
-
+        # lambdaがないと関数が勝手に呼ばれて実行される
         date_button = tb.Button(date_entry, text='Get Date', style="warning", width=10, command=lambda: get_date(self))
         date_button.grid(row=0, column=2, padx=10, pady=(10, 20))
 
@@ -49,8 +50,8 @@ class TinyCashBook(tb.Frame):
 
     # Create allowance frame
     def allowance_frame(self, parent):
-        allowance_frame = tb.LabelFrame(parent, text="💰Allowance💰", style='info.TLabelframe')
-        allowance_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        allowance_frame = tb.LabelFrame(parent, text="💰Allowance💰", style='info')
+        allowance_frame.pack(fill="x", padx=20, pady=(0, 20))
 
         allowance_source_label = tb.Label(allowance_frame, text="💡How did you get?          ")
         allowance_source_label.grid(row=1, column=0, padx=10, pady=(10, 20), sticky="w")
@@ -71,8 +72,8 @@ class TinyCashBook(tb.Frame):
 
     # Create expense frame
     def expense_frame(self, parent):
-        expense_frame = tb.LabelFrame(parent, text="💸Spending💸", style='danger.TLabelframe')
-        expense_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 20))
+        expense_frame = tb.LabelFrame(parent, text="💸Spending💸", style='danger')
+        expense_frame.pack(fill="x", padx=20, pady=(0, 20))
 
         expense_item_label = tb.Label(expense_frame, text="🍟What did you use it for?")
         expense_item_label.grid(row=2, column=0, padx=10, pady=(10, 20), sticky="w")
@@ -95,12 +96,12 @@ class TinyCashBook(tb.Frame):
 
     # Create treeview frame
     def tree_frame(self, parent):
-        tree_frame = tb.LabelFrame(parent, text="💿History💿", style='success.TLabelframe')
-        tree_frame.pack(fill="x", expand="yes", padx=20, pady=(0, 0))
+        tree_frame = tb.LabelFrame(parent, text="💿History💿", style='success')
+        tree_frame.pack(fill="x", padx=20, pady=(0, 0))
         columns = ("date", "source", "item", "allowance", "spending")
-
+        # Inserts each record (row of data) into the tree view.
         self.record_tree = tb.Treeview(tree_frame, style="success", selectmode="extended", columns=columns, show="headings")
-        self.record_tree.pack(fill="x", expand="yes", padx=10, pady=10)
+        self.record_tree.pack(fill="x", padx=10, pady=10)
 
         self.record_tree.column('date', width=80, anchor="w")
         self.record_tree.column('source', width=180, anchor="w")
@@ -113,18 +114,18 @@ class TinyCashBook(tb.Frame):
         self.record_tree.heading('item', text="What did you use it for?", anchor="w")
         self.record_tree.heading('allowance', text="Allowance", anchor="e")
         self.record_tree.heading('spending', text="Spending", anchor="e")
-
+        # Inserts each record (row of data) into the tree view.
         for record in self.sample_data:
-            self.record_tree.insert('', END, values=record)
-
+            self.record_tree.insert('', END, values=record) # insert at the end of the list
+        # To trigger a specific action when the user clicks the mouse on an item in the treeview.
         self.record_tree.bind("<ButtonRelease-1>", lambda event: select_record(self, event))
-
+        # This event binding allows the system to detect which row in the treeview the user has selected and to perform some action based on the selected row.
         return tree_frame
 
     # Create remain frame
     def remain_frame(self, parent):
-        remain_frame = tb.LabelFrame(parent, text="🐖Balance🐖", style='success.TLabelframe')
-        remain_frame.pack(anchor="w", expand="yes", padx=20, pady=(0, 10))
+        remain_frame = tb.LabelFrame(parent, text="🐖Balance🐖", style='success')
+        remain_frame.pack(anchor="w", padx=20, pady=(0, 10))
 
         self.remain_label = tb.Label(remain_frame, text="Total Allowance:  $0   Total Spending:  $0   Savings:  $0")
         self.remain_label.grid(row=0, column=0, padx=20, pady=(10, 20), sticky="e")
@@ -136,7 +137,7 @@ class TinyCashBook(tb.Frame):
 
     # Create button frame
     def btn_frame(self, parent):
-        btn_frame = tb.LabelFrame(parent, text="🖋Commands🗑", style='light.TLabelframe')
+        btn_frame = tb.LabelFrame(parent, text="🖋Commands🗑", style='dark')
         btn_frame.pack(anchor="w", padx=20, pady=(0, 20))
 
         graph_btn = tb.Button(btn_frame, text="SHOW GRAPHS", width=15, style="primary", command=lambda: show_graph(self))
@@ -152,7 +153,7 @@ class TinyCashBook(tb.Frame):
 
     # Create graph frame
     def graph_frame(self, parent):
-        graph_frame = tb.LabelFrame(parent, text="📈Graphs📊", style='info.TLabelframe')
+        graph_frame = tb.LabelFrame(parent, text="📈Graphs📊", style='info')
         graph_frame.pack(padx=20, pady=(0, 20), anchor="w")
 
         pie_label = tb.Label(graph_frame, text="")
