@@ -10,7 +10,7 @@ Tiny Cash Book is a child-friendly Python application for managing allowances an
 - Add, update, and delete financial records.
 - Export data for further analysis.
 
-### Installation
+### How to run
 1. Clone this repository.
 2. Install the required packages.
 3. Run the application.
