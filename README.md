@@ -26,3 +26,9 @@ Tiny Cash Book is a child-friendly Python application for managing allowances an
 - Use "ADD", "UPDATE", and "DELETE" buttons to manage records.
 - "SHOW GRAPH" displays income and expense charts.
 - Export records to CSV for record-keeping.
+
+### 🔮Future Feature🔮
+- Search feature for monthly income and expenses.
+- Display line graph.
+- Enhanced error handling.
+- Connect with Google Sheets.
